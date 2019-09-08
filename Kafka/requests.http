@@ -1,0 +1,46 @@
+### Get info about topic 'events'
+GET http://localhost:8082/topics/events
+Accept: application/json
+
+### Post event to the topic 'events'
+POST http://localhost:8082/topics/events
+Content-Type: application/vnd.kafka.json.v2+json
+
+{
+    "records": [
+        {
+            "value": {
+                "type": "EventValue",
+                "tag": 1,
+                "applicationTimestamp": "2019-09-08T10:00:00Z",
+                "data": {
+                    "key": "test-key",
+                    "value": "test-value"
+                }
+            }
+        }
+    ]
+}
+
+### Create consumer group 'testgroup'
+POST http://localhost:8082/consumers/testgroup
+Content-Type: application/vnd.kafka.v2+json
+
+{
+    "name": "testconsumer",
+    "format": "json"
+}
+
+### Subscribe 'testconsumer' to the topic 'events'
+POST http://localhost:8082/consumers/testgroup/instances/testconsumer/subscription
+Content-Type: application/vnd.kafka.v2+json
+
+{
+    "topics": [
+        "events"
+    ]
+}
+
+### Fentch records from the topic 'events'
+GET http://localhost:8082/consumers/testgroup/instances/testconsumer/records?timeout=3000
+Accept: application/vnd.kafka.json.v2+json

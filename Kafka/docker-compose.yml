@@ -1,0 +1,60 @@
+version: "3.7"
+
+services:
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
+    expose:
+      - 2181
+    environment:
+      - ZOOKEEPER_CLIENT_PORT=2181
+      - ZOOKEEPER_TICK_TIME=2000
+    volumes:
+      - zk-txn-logs:/var/lib/zookeeper/log
+      - zk-data:/var/lib/zookeeper/data
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka
+    expose:
+      - 29092
+    ports:
+      - 9092:9092
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_LISTENERS=PLAINTEXT://kafka:29092,EXTERNAL://localhost:9092
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:29092,EXTERNAL://localhost:9092
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+    volumes:
+      - kafka-data:/var/lib/kafka/data
+    depends_on:
+      - zookeeper
+
+  kafka-rest:
+    image: confluentinc/cp-kafka-rest
+    container_name: kafka-rest
+    ports:
+      - 8082:8082
+    environment:
+      - KAFKA_REST_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_REST_HOST_NAME=kafka-rest
+      - KAFKA_REST_CLIENT_SECURITY_PROTOCOL=PLAINTEXT
+      - KAFKA_REST_BOOTSTRAP_SERVERS=kafka:29092
+      - KAFKA_REST_LISTENERS=http://0.0.0.0:8082
+    depends_on:
+      - zookeeper
+      - kafka
+
+  kafkacat:
+    image: confluentinc/cp-kafkacat:latest
+    container_name: kafkacat
+    command: sleep infinity
+
+volumes:
+  zk-txn-logs:
+  zk-data:
+  kafka-data:

@@ -1,0 +1,15 @@
+{
+    "records": [
+        {
+            "value": {
+                "type": "EventValue",
+                "tag": null,
+                "applicationTimestamp": "2019-09-08T10:00:00Z",
+                "data": {
+                    "key": "test-key",
+                    "value": "test-value"
+                }
+            }
+        }
+    ]
+}
