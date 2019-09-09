@@ -1,0 +1,16 @@
+### Get event from 'events' queue at 0 offset
+GET https://localhost:5001/events/0
+
+### Post event to 'events' queue
+POST https://localhost:5001/events
+Content-Type: application/json
+
+{
+    "type": "EventValue",
+    "tag": 1,
+    "applicationTimestamp": "2019-09-08T10:00:00Z",
+    "data": {
+        "key": "test-key",
+        "value": "test-value"
+    }
+}
